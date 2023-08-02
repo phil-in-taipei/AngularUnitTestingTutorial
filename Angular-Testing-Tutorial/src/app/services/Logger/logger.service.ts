@@ -9,7 +9,11 @@ export class LoggerService {
 
   constructor() { }
 
-  log(message: string) {
+  log(message: string): void {
     this.messages.push(message);
+  }
+
+  clear(): void {
+    this.messages = [];
   }
 }

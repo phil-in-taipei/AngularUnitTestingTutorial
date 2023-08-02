@@ -13,4 +13,21 @@ describe('LoggerService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should not have any messages when created', () => {
+    expect(service.messages).toEqual([]);
+  });
+
+  it('should add a message when log is called', () => {
+    service.log("message1");
+    expect(service.messages).toEqual(['message1']);
+  });
+
+  it('should clear all messages when clear is called', () => {
+    service.log("message1");
+    service.log("message2");
+    service.log("message3");
+    service.clear();
+    expect(service.messages).toEqual([]);
+  });
 });
