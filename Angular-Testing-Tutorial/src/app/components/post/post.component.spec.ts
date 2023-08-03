@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { first } from 'rxjs';
 import { PostComponent } from './post.component';
 import { Post } from '../../models/post.model';
+import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 
-fdescribe('PostComponent', () => {
+describe('PostComponent', () => {
   let fixture: ComponentFixture<PostComponent>;
 
   let component: PostComponent;
@@ -20,7 +22,8 @@ fdescribe('PostComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ PostComponent ]
+      declarations: [ PostComponent ],
+      schemas: [NO_ERRORS_SCHEMA], // note: temporary to supress routerLink error
     })
     fixture = TestBed.createComponent(PostComponent);
     component = fixture.componentInstance;
@@ -31,9 +34,21 @@ fdescribe('PostComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should render the post title in the anchor element', () => {
+    const post: Post = {
+      id: 1,
+      body: 'body 1',
+      title: 'title 1',
+    };
+    component.post = post;
+    fixture.detectChanges();
+    const postDebugElement: DebugElement = fixture.debugElement;
+    const a = postDebugElement.query(By.css('a')).nativeElement;
+    expect(a?.textContent).toContain("title 1");
+  });
+
 
   it('should emit event when the delete post is clicked', () => {
-    //let component:PostComponent = new PostComponent();
     const post: Post = { id: 1, body: 'Body 1', title: 'Title 1' };
     component.post = post;
 

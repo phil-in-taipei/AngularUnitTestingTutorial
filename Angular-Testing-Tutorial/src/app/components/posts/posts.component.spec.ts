@@ -1,24 +1,37 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { of } from 'rxjs';
+import { By } from '@angular/platform-browser';
 import { Post } from '../../models/post.model';
 import { PostsComponent } from './posts.component';
 import { PostService } from '../../services/Post/post.service';
+import { PostComponent } from '../post/post.component';
 
 
-describe('PostsComponent', () => {
+fdescribe('PostsComponent', () => {
   let POSTS: Post[];
   let component: PostsComponent;
   let postService: any;
-  //let mockPostService: any;
-  //let fixture: ComponentFixture<PostsComponent>;
+  let mockPostService: any;
+  let fixture: ComponentFixture<PostsComponent>;
 
+  /*
+  @Component({
+    selector: 'app-post',
+    template: '<div></div>',
+  })
+  class FakePostComponent {
+    @Input() post!: Post;
+  } */ // note: this is for shallow test
+
+  /*
   class mockPostService {
     getPosts() {}
 
     deletePost(post: Post) {
       return of(true);
     }
-  }
+  } */
 
   beforeEach(() => {
     POSTS = [
@@ -39,25 +52,65 @@ describe('PostsComponent', () => {
       },
     ];
 
-    //mockPostService = jasmine.createSpyObj(['getPosts', 'deletePost']);
+    mockPostService = jasmine.createSpyObj(['getPosts', 'deletePost']);
 
     TestBed.configureTestingModule({
+      declarations: [PostsComponent, PostComponent], //FakePostComponent 
       providers: [
-        PostsComponent,
         {
-            provide: PostService,
-          useClass: mockPostService,
+          provide: PostService,
+          useValue: mockPostService, // note: useClass for custom mock service (above)
           },
-     ],
+      ],
+    });
+
+    fixture = TestBed.createComponent(PostsComponent);
+    component = fixture.componentInstance;
   });
 
-    //fixture = TestBed.createComponent(PostsComponent);
-    component = TestBed.inject(PostsComponent);//fixture.componentInstance;
-    postService = TestBed.inject(PostService);
+  it('should create exact same number of Post Component with Posts', () => {
+    mockPostService.getPosts.and.returnValue(of(POSTS));
+    //ngOnInit()
+    fixture.detectChanges();
+    const postComponentDEs = fixture.debugElement.queryAll(
+      By.directive(PostComponent)
+    );
+
+    expect(postComponentDEs.length).toEqual(POSTS.length);
   });
+
+  it('should check whether exact post is sending to PostComponent', () => {
+    mockPostService.getPosts.and.returnValue(of(POSTS));
+    fixture.detectChanges();
+    const postComponentDEs = fixture.debugElement.queryAll(
+      By.directive(PostComponent)
+    );
+
+    for (let i = 0; i < postComponentDEs.length; i++) {
+      let postComponentInstance = postComponentDEs[i]
+        .componentInstance as PostComponent;
+      expect(postComponentInstance.post.title).toEqual(POSTS[i].title);
+    }
+  });
+
+  it('should set posts from the service directly', () => {
+    mockPostService.getPosts.and.returnValue(of(POSTS));
+    fixture.detectChanges();
+    expect(component.posts.length).toBe(3);
+  });
+
+  it('should create one post child Element for each post ', () => {
+    mockPostService.getPosts.and.returnValue(of(POSTS));
+    fixture.detectChanges();
+    const debugElement = fixture.debugElement;
+    const postsElement = debugElement.queryAll(By.css('.posts'));
+    expect(postsElement.length).toBe(POSTS.length);
+  }); 
+  
 
   describe('delete', () => {
     beforeEach(() => {
+      mockPostService.deletePost.and.returnValue(of(true));
       component.posts = POSTS;
     });
 
@@ -74,9 +127,8 @@ describe('PostsComponent', () => {
     });
 
     it('should call the deletePosts method in postService only once', () => {
-      spyOn(postService, 'deletePost').and.callThrough();
       component.delete(POSTS[1]);
-      expect(postService.deletePost).toHaveBeenCalledTimes(1);
+      expect(mockPostService.deletePost).toHaveBeenCalledTimes(1);
     });
   });
 
