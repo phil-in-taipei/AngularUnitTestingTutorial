@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { CalculatorService } from './calculator.service';
 import { LoggerService } from '../Logger/logger.service';
 
+// this is an alternative approach to setting up the TestBed
 function setUp() {
   const mockLoggerService = jasmine.createSpyObj('LoggerService', ['log']);
   TestBed.configureTestingModule({

@@ -8,7 +8,7 @@ import { PostService } from '../../services/Post/post.service';
 import { PostComponent } from '../post/post.component';
 
 
-fdescribe('PostsComponent', () => {
+describe('PostsComponent', () => {
   let POSTS: Post[];
   let component: PostsComponent;
   let postService: any;

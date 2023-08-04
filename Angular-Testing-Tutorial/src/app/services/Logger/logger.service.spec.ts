@@ -6,7 +6,10 @@ describe('LoggerService', () => {
   let service: LoggerService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [LoggerService], // this line is optional for service w/o dependency??
+    });
+    // previously .inject was .get -> (deprecated)
     service = TestBed.inject(LoggerService);
   });
 
