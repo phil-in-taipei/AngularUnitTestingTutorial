@@ -129,6 +129,43 @@ describe('PostsComponent', () => {
     it('should call the deletePosts method in postService only once', () => {
       component.delete(POSTS[1]);
       expect(mockPostService.deletePost).toHaveBeenCalledTimes(1);
+    }); 
+
+
+    // below is a deep integration test where a button in a child component
+    // is clicked, it iterates through each child component and tests the click
+    it('should call delete method when post component delete button is clicked', () => {
+      spyOn(component, 'delete');
+      mockPostService.getPosts.and.returnValue(of(POSTS));
+      fixture.detectChanges();
+
+      let postComponentDEs = fixture.debugElement.queryAll(
+        By.directive(PostComponent)
+        );
+      
+      for (let i=0; i < postComponentDEs.length; i++) {
+        postComponentDEs[i].query(By.css('button'))
+        .triggerEventHandler('click', { preventDefault: () => {}});
+        expect(component.delete).toHaveBeenCalledWith(POSTS[i]);
+      }
+
+    });
+
+    it('should call the delete method when delete is emitted in child (PostComponent)', () => {
+      spyOn(component, 'delete');
+      mockPostService.getPosts.and.returnValue(of(POSTS));
+      fixture.detectChanges();
+
+      let postComponentDEs = fixture.debugElement
+                              .queryAll(
+                                By.directive(PostComponent)
+                                );
+      for (let i=0; i < postComponentDEs.length; i++) {
+        (postComponentDEs[i].componentInstance as PostComponent).delete.emit(
+          POSTS[i]
+        );
+        expect(component.delete).toHaveBeenCalledWith(POSTS[i]);
+      }
     });
   });
 

@@ -2,10 +2,9 @@ import { TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { PostService } from './post.service';
 import { Post } from '../../models/post.model';
-import { of } from 'rxjs';
 
 
-fdescribe('Test Post Service with Angular HttpClient testing tools', () => {
+describe('Test Post Service with Angular HttpClient testing tools', () => {
     let postService: PostService;
     let httpTestingController: HttpTestingController;
     let POSTS: Post[] = [
@@ -37,6 +36,20 @@ fdescribe('Test Post Service with Angular HttpClient testing tools', () => {
         httpTestingController = TestBed.inject(HttpTestingController);
     });
 
+    describe('get post', () => {
+      it('should return post when getPost is called', (done: DoneFn) => {
+        postService.getPost(1).subscribe(data => {
+          expect(data).toEqual(POSTS[0]);
+          done();
+      });
+        const request = httpTestingController.expectOne(
+          `https://jsonplaceholder.typicode.com/posts/1`
+        );
+        request.flush(POSTS[0]);
+        expect(request.request.method).toBe('GET')
+      });
+    });
+
     describe('get posts', () => {
         it('should return posts when getPosts is called', (done: DoneFn) => {
             postService.getPosts().subscribe(data => {
@@ -48,6 +61,13 @@ fdescribe('Test Post Service with Angular HttpClient testing tools', () => {
             request.flush(POSTS);
             expect(request.request.method).toBe('GET');
         });
+    });
+
+    // only use this here is every test function makes an api call
+    // otherwise just include it in the bottom of the individual
+    // test functions
+    afterEach(() => {
+      httpTestingController.verify();
     });
 
 });
