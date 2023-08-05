@@ -5,7 +5,7 @@ import { Post } from '../../models/post.model';
 import { of } from 'rxjs';
 
 
-fdescribe('PostService', () => {
+describe('PostService', () => {
   let httpClientSpy: jasmine.SpyObj<HttpClient>;
   let service: PostService;
   let POSTS: Post[] = [
