@@ -6,24 +6,11 @@ import {DebugElement} from '@angular/core';
 import { PostDetailComponent } from './post-detail.component';
 import { ActivatedRoute } from '@angular/router';
 
-fdescribe('PostDetailComponent', () => {
+describe('PostDetailComponent', () => {
   let postService: any;
   let location: any;
   let route: any;
 
-  /*
-  let mockActivatedRoute = {
-    snapshot: {
-      paramMap: {
-        get: () => {
-          return '3';
-        }
-      }
-    }
-  };
-  let mockPostService = jasmine.createSpyObj(['getPost', 'updatePost']);
-  let mockLocation = jasmine.createSpyObj(['back']);
-  */
   let POSTS = [
     {
       id: 1,
