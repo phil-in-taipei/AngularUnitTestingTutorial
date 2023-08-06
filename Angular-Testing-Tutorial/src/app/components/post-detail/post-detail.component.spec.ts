@@ -6,7 +6,7 @@ import {DebugElement} from '@angular/core';
 import { PostDetailComponent } from './post-detail.component';
 import { ActivatedRoute } from '@angular/router';
 
-fdescribe('PostDetailComponent', () => {
+describe('PostDetailComponent', () => {
   let POSTS = [
     {
       id: 1,
